@@ -1,0 +1,4 @@
+# Just ignore all and then whitelist what I'll need
+*
+!README.org
+!init.el
