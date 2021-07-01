@@ -55,32 +55,24 @@
 (set-default-coding-systems 'utf-8)     ;Default to UTF-8
 
 ;; Don't pollute the modeline's minor mode list
+(use-package diminish
+  :ensure t)
+
 (diminish 'visual-line-mode)
 (diminish 'eldoc-mode)
 (diminish 'abbrev-mode)
 
 ;; Smoother scrolling
 (when (display-graphic-p)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
-        mouse-wheel-progressive-speed nil))
-(setq scroll-step 1
-      scroll-margin 0
-      scroll-conservatively 100000)
+  (setq mouse-wheel-scroll-amount '(3 ((shift) . 3)) ;Three lines at a time
+        mouse-wheel-progressive-speed nil            ;Don't accelerate
+        mouse-wheel-follow-mouse t))                 ;Scroll under mouse
+(setq scroll-step 1                                  ;Keyboard scrolling
+      scroll-margin 0                                ;Scroll at the edge
+      scroll-conservatively 101)                     ;No weird scrolling
 
 ;; Experimental
 (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
-
-;; Disable automatic indention
-;;(electric-indent-mode -1)
-
-;; Three lines at a time with wheel scrolling
-;; (setq mouse-wheel-scroll-amount '(3 ((shift) . 3)))
-
-;; Don't accelerate wheel scrolling
-;; (setq mouse-wheel-progressive-speed nil)
-
-;; Scroll window under mouse
-;; (setq mouse-wheel-follow-mouse 't)
 
 ;; Change default backup directory
 (setq backup-directory-alist
@@ -90,7 +82,8 @@
       `((".*" ,(concat user-emacs-directory "emacs-autosave/") t)))
 ;; Change default custom-file
 (setq custom-file (concat user-emacs-directory "custom.el"))
-(load custom-file)
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;; Because I'm running emacs as a server, starting it with a systemd
 ;; unit, it doesn't get a chance to read environment variables from my
@@ -99,52 +92,7 @@
   :ensure t)
 (exec-path-from-shell-initialize)
 
-;; Do not use local variables (directoty and file)
-;; (setq-default enable-local-variables nil)
-
-;; Set bookmark
-;; (global-set-key (kbd "<f5>") 'bookmark-set)
-
-;; Load bookmark
-;; (global-set-key (kbd "<f6>") 'bookmark-jump)
-
-;; Save buffer
-;; (global-set-key (kbd "<f12>") 'save-buffer)
-
-;; Insert current date and time
-;; (defun insert-current-date () (interactive)
-       ;; (insert (shell-command-to-string "echo -n $(date +%d.%m.%Y)")))
-;; (defun insert-current-time () (interactive)
-       ;; (insert (shell-command-to-string "echo -n $(date +%H:%M)")))
-
-;; Insert current date
-;; (global-set-key (kbd "C-c d") 'insert-current-date)
-
-;; Insert current time
-;; (global-set-key (kbd "C-c t") 'insert-current-time)
-
-;; Revert buffer
-;; (global-set-key (kbd "C-<f5>") 'revert-buffer)
-
-;; Goto line
-;; (global-set-key (kbd "<f7>") 'goto-line)
-
-;; Open thin horizontal buffer
-;; (global-set-key (kbd "C-x 4") (kbd "C-x 2 C-x o C-x 2 C-x 0"))
-
-;; Open thin vertical buffer
-;; (global-set-key (kbd "C-x 5") (kbd "C-x 3 C-x o C-x 3 C-x 0"))
-
-;; Open terminal
-;; (global-set-key (kbd "<XF86Favorites>") (lambda () (interactive) (ansi-term "/usr/bin/zsh")))
-
-;; Reload .emacs
-;; Need fixing
-;; (global-set-key (kbd "M-<Scroll_Lock>") (load-file "~/.emacs"))
-
-(global-set-key (kbd "C-s-v") (lambda () (interactive) (scroll-up-line 1)))
-(global-set-key (kbd "M-s-v") (lambda () (interactive) (scroll-down-line 1)))
-
+;; Scroll a line without touching a mouse
 (global-set-key (kbd "C-s-n") (lambda () (interactive) (scroll-up-line 1)))
 (global-set-key (kbd "C-s-p") (lambda () (interactive) (scroll-down-line 1)))
 
@@ -185,25 +133,11 @@
   :config
   (powerline-center-theme))
 
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :hook (after-init . doom-modeline-mode))
-
 ;; Colour theme
 (use-package twilight-theme
   :ensure t
   :config
   (load-theme 'twilight))
-
-;; Doom modeline
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :config
-;;   (doom-modeline-mode t))
-
-;; (use-package hl-line
-;;   :ensure t
-;;   :hook ((after-init . global-hl-line-mode)))
 
 (set-face-background 'hl-line "#202020")
 (set-face-foreground 'highlight nil)
@@ -259,49 +193,6 @@ FACE defaults to inheriting from default and highlight."
                               (window-start) msg 'popup-tip-face))))))
           (blink-matching-open))))
     (advice-add #'show-paren-function :after #'show-paren-off-screen)))
-
-;; (use-package diff-hl
-;;   :ensure t
-;;   :custom-face
-;;   (diff-hl-change ((t (:foreground ,(face-background 'highlight) :background nil))))
-;;   (diff-hl-insert ((t (:background nil))))
-;;   (diff-hl-delete ((t (:background nil))))
-;;   :bind (:map diff-hl-command-map
-;;          ("SPC" . diff-hl-mark-hunk))
-;;   :hook ((after-init . global-diff-hl-mode)
-;;          (dired-mode . diff-hl-dired-mode))
-;;   :init (setq diff-hl-draw-borders nil)
-;;   :config
-;;   ;; Highlight on-the-fly
-;;   (diff-hl-flydiff-mode 1)
-
-;;   ;; Set fringe style
-;;   (setq-default fringes-outside-margins t)
-
-;;   (with-no-warnings
-;;     (defun my-diff-hl-fringe-bmp-function (_type _pos)
-;;       "Fringe bitmap function for use as `diff-hl-fringe-bmp-function'."
-;;       (define-fringe-bitmap 'my-diff-hl-bmp
-;;         (vector (if sys/macp #b11100000 #b11111100))
-;;         1 8
-;;         '(center t)))
-;;     (setq diff-hl-fringe-bmp-function #'my-diff-hl-fringe-bmp-function)
-
-;;     (unless (display-graphic-p)
-;;       (setq diff-hl-margin-symbols-alist
-;;             '((insert . " ") (delete . " ") (change . " ")
-;;               (unknown . " ") (ignored . " ")))
-;;       ;; Fall back to the display margin since the fringe is unavailable in tty
-;;       (diff-hl-margin-mode 1)
-;;       ;; Avoid restoring `diff-hl-margin-mode'
-;;       (with-eval-after-load 'desktop
-;;         (add-to-list 'desktop-minor-mode-table
-;;                      '(diff-hl-margin-mode nil))))
-
-;;     ;; Integration with magit
-;;     (with-eval-after-load 'magit
-;;       (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
-;;       (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))))
 
 ;; Fonts
 ;; (set-default-font "Inconsolata LGC-12")
@@ -398,19 +289,11 @@ FACE defaults to inheriting from default and highlight."
   :ensure t
   :init (diredfl-global-mode 1))
 
-;; List of extensions and corresponding programs
-;; (load "~/.emacs.d/dired-open-extensions.el")
-
 ;; Show help after hitting prefix
 (use-package which-key
   :ensure t
   :diminish
   :config (which-key-mode))
-
-;; (use-package org-mode
-  ;; :ensure t
-  ;; :bind
-;; (("<Scroll-Lock>" . org-time-stamp-inactive)))
 
 ;; Automatically reload files modified by external program
 (use-package autorevert
@@ -487,12 +370,6 @@ FACE defaults to inheriting from default and highlight."
   :ensure t
   :bind ([remap goto-line] . goto-line-preview))
 
-;; Delete all the whitespaces
-;; (use-package hungry-delete
-;;   :ensure
-;;   :config
-;;   (global-hungry-delete-mode))
-
 ;; Highlight lines that are too long and more
 (use-package whitespace
   :ensure
@@ -531,24 +408,17 @@ FACE defaults to inheriting from default and highlight."
 ;; Use Perl Compatible Regular Expressions
 (use-package pcre2el
   :ensure t
-  :diminish
+  :diminish pcre-mode
   :config
-  (pcre-mode)
-  (diminish 'pcre-mode))
-
-;; Auto completition
-;; (require 'auto-complete)
-;; (require 'auto-complete-config)
-;; (ac-config-default)
+  (pcre-mode))
 
 ;; Expand abbriviation to template
 (use-package yasnippet
   :ensure t
-  :diminish
+  :diminish yas-minor-mode
   :init
   (setq yas-prompt-functions '(yas-ido-prompt))
-  (yas-global-mode 1)
-  (diminish 'yas-minor-mode))
+  (yas-global-mode 1))
 
 ;; A collection of snippets
 (use-package yasnippet-snippets
@@ -646,13 +516,6 @@ FACE defaults to inheriting from default and highlight."
   :ensure t
   :commands lsp-ui-mode)
 
-(use-package dap-mode
-  :ensure t)
-
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
-
 (use-package ccls
   :hook
   ((c-mode c++-mode objc-mode cuda-mode) .
@@ -725,78 +588,3 @@ FACE defaults to inheriting from default and highlight."
   (set (make-local-variable 'comment-start) "/* ")
   (set (make-local-variable 'comment-end)   " */"))
 (add-hook 'c++-mode-hook 'c++-comment-style-hook-2)
-
-
-;;C Headers
-;; (defun own:ac-c-header-init ()
-  ;; (require 'auto-complete-c-headers)
-  ;; (add-to-list 'ac-sources 'ac-source-c-headers))
-
-;; (add-hook 'c++-mode-hook 'own:ac-c-header-init)
-;; (add-hook 'c-mode-hook 'own:ac-c-header-init)
-
-;;CEDIT
-
-;;Turn on semantic
-;; (semantic-mode 1)
-;; (defun own:add-semantic-to-autocomplete ()
-  ;; (add-to-list 'ac-sources 'ac-source-semantic))
-;; (add-hook 'c-mode-common-hook 'own:add-semantic-to-autocomplete)
-
-;; Bind some CEDIT keys
-;; (defun own:cedit-hook ()
-;;   Jump to definition
-;;   (local-set-key (kbd "C-c b") 'semantic-ia-fast-jump)
-;;   Show summury
-;;   (local-set-key (kbd "C-c s") 'semantic-ia-show-summary)
-;;   Show documentation
-;;   (local-set-key (kbd "C-c i") 'semantic-ia-show-doc)
-;;   Jump between the declaration and implementation of teh function
-;;   (local-set-key (kbd "C-c C-j") 'semantic-analyze-proto-impl-toggle)
-;;   Jump to variable/function
-;;   (local-set-key (kbd "C-c C-k") 'semantic-complete-jump))
-;; (add-hook 'c-mode-common-hook 'own:cedit-hook)
-
-;;Use CEDIT as a source for autocompletion
-;; (defun own:c-mode-cedit-hook ()
-  ;; (add-to-list 'ac-sources 'ac-source-gtags)
-  ;; (add-to-list 'ac-sources 'ac-source-semantic))
-;; (add-hook 'c-mode-hook 'own:c-mode-cedit-hook)
-
-;;Automatic reparsing open buffers
-;;(globsal-semantic-idle-scheduler-mode 1)
-
-;; Own haskell-hook
-;; (defun own:haskell-hook ()
-  ;;Start with interactive-haskell-mode
-  ;; (interactive-haskell-mode t))
-;; (add-hook 'haskell-mode-hook 'own:haskell-hook)
-
-;;TODO
-;;Symbol summary
-
-;; (add-to-list 'auto-mode-alist '("\\.wiki\\'" . creole-mode))
-
-;;LaTeX mode forjjj all *.tex files
-;; (add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
-
-;;Autocomplete in LaTeX-mode
-;; (add-hook 'LaTeX-mode-hook
-;;           (lambda()
-;;             (local-set-key (kbd "<C-tab>") 'TeX-complete-symbol)))
-
-;;Common Lisp
-;; (require 'cl)
-;; (setq-default inferior-lisp-program "sbcl")
-
-;;Slime
-;; (require 'slime)
-;; (require 'slime-autoloads)
-;; (slime-setup '(slime-asdf
-               ;; slime-fancy
-               ;; slime-indentation))
-;; (setq-default slime-net-coding-system 'utf-8-unix)
-
-;; (require 'ox-mediawiki)
-
-;; (setq python-shell-interpreter "python3")
