@@ -96,6 +96,10 @@
 (global-set-key (kbd "C-s-n") (lambda () (interactive) (scroll-up-line 1)))
 (global-set-key (kbd "C-s-p") (lambda () (interactive) (scroll-down-line 1)))
 
+;; Don't preserve font on copy
+(add-to-list 'yank-excluded-properties 'font)
+(add-to-list 'yank-excluded-properties 'face)
+
 ;; --------------------------------
 ;; Appearance
 ;; --------------------------------
@@ -293,7 +297,9 @@ FACE defaults to inheriting from default and highlight."
 (use-package which-key
   :ensure t
   :diminish
-  :config (which-key-mode))
+  :config
+  (setq which-key-idle-delay 0.5)       ;Reduce delay
+  (which-key-mode))
 
 ;; Automatically reload files modified by external program
 (use-package autorevert
@@ -322,6 +328,11 @@ FACE defaults to inheriting from default and highlight."
 (use-package ivy
   :ensure t
   :diminish)
+
+(use-package rg
+  :ensure t
+  :bind
+  (("C-c r r" . rg-project)))
 
 (use-package swiper
   :ensure t
@@ -437,11 +448,11 @@ FACE defaults to inheriting from default and highlight."
                ("shell" (or (mode . eshell-mode)
                             (mode . shell-mode)
                             (mode . term-mode)))
-               ("Programming" (or (mode . c-mode)
-                                  (mode . haskell-mode)
-                                  (mode . lisp-mode)
-                                  (mode . racket-mode)
-                                  (mode . perl-mode)))
+               ("Code" (or (mode . c-mode)
+                           (mode . haskell-mode)
+                           (mode . lisp-mode)
+                           (mode . racket-mode)
+                           (mode . perl-mode)))
                ("Emacs" (or (mode . emacs-lisp-mode)))))))
 
 (add-hook 'ibuffer-mode-hook
@@ -456,7 +467,11 @@ FACE defaults to inheriting from default and highlight."
   :bind (("C-c m" . magit-status)))
 
 (use-package git-messenger
-  :ensure t)
+  :ensure t
+  :config
+  (setq git-messenger:use-magit-popup t)
+  :bind
+  (("C-c M-b" . git-messenger:popup-message)))
 
 ;; Rectangle selection
 ;; Press C-RET to start
@@ -469,7 +484,8 @@ FACE defaults to inheriting from default and highlight."
   :ensure t
   :init
   (projectile-global-mode)
-  (setq projectile-enable-caching t)
+  (setq projectile-enable-caching t
+        projectile-mode-line-prefix "Proj")
   :bind (("C-c M-f" . projectile-switch-project)
          ("C-c C-f" . projectile-find-file)
          ("C-c C-g" . projectile-grep)))
@@ -494,6 +510,13 @@ FACE defaults to inheriting from default and highlight."
 (use-package diffview
   :ensure t
   :init)
+
+(use-package treemacs
+  :ensure t
+  :config
+  (setq treemacs-position 'right)
+  :bind
+  (("s-t" . treemacs)))
 
 (use-package company
   :ensure t
@@ -531,6 +554,13 @@ FACE defaults to inheriting from default and highlight."
 (use-package org-superstar
   :ensure t
   :hook (org-mode . org-superstar-mode))
+
+;; Looking up a word in a dictionary
+(use-package lexic
+  :ensure t
+  :bind
+  (("M-s M-l RET" . lexic-search-word-at-point)
+   ("M-s M-l /"   . lexic-search)))
 
 ;; --------------------------------
 ;; Modes
