@@ -31,6 +31,7 @@
  sentence-end-double-space nil          ;Sane sentence end
  delete-by-moving-to-trash t            ;Deleted files go to rubbish bin
  visible-bell              t            ;Flash instead of beeping
+ use-package-always-ensure t            ;No reason not to
  ;; C style
  c-default-style           "k&r"        ;Style
  c-basic-indent            3            ;As in Mesa
@@ -55,8 +56,7 @@
 (set-default-coding-systems 'utf-8)     ;Default to UTF-8
 
 ;; Don't pollute the modeline's minor mode list
-(use-package diminish
-  :ensure t)
+(use-package diminish)
 
 (diminish 'visual-line-mode)
 (diminish 'eldoc-mode)
@@ -88,8 +88,7 @@
 ;; Because I'm running emacs as a server, starting it with a systemd
 ;; unit, it doesn't get a chance to read environment variables from my
 ;; .zshenv. Thus, I have to use this dirty hack.
-(use-package exec-path-from-shell
-  :ensure t)
+(use-package exec-path-from-shell)
 (exec-path-from-shell-initialize)
 
 ;; Scroll a line without touching a mouse
@@ -105,12 +104,10 @@
 ;; --------------------------------
 
 (use-package all-the-icons
-  :ensure t
   :diminish)
 
 ;; Dashboard
 (use-package dashboard
-  :ensure t
   :diminish
   :init
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))
@@ -133,13 +130,11 @@
 
 ;; Modeline
 (use-package powerline
-  :ensure t
   :config
   (powerline-center-theme))
 
 ;; Colour theme
 (use-package twilight-theme
-  :ensure t
   :config
   (load-theme 'twilight))
 
@@ -148,7 +143,6 @@
 
 ;; Highlight matching parens
 (use-package paren
-  :ensure t
   :hook (after-init . show-paren-mode)
   :init (setq show-paren-when-point-inside-paren t
               show-paren-when-point-in-periphery t)
@@ -271,7 +265,6 @@ FACE defaults to inheriting from default and highlight."
 ;; Dired
 (use-package dired-open
   :after (dired)
-  :ensure t
   :bind
   (("<f8>"    . dired-other-window)  ;Start dired
    ("M-RET"   . dired-open-xdg)      ;Open with xdg-open
@@ -283,19 +276,19 @@ FACE defaults to inheriting from default and highlight."
   ;; Open with external app if not subdir
   (dired-open-functions '(dired-open-by-extension dired-open-subdir)))
 
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 (use-package dired-git-info
-  :ensure t
   :bind (:map dired-mode-map
               (")" . dired-git-info-mode)))
 
 ;; Colourful dired
 (use-package diredfl
-  :ensure t
   :init (diredfl-global-mode 1))
 
 ;; Show help after hitting prefix
 (use-package which-key
-  :ensure t
   :diminish
   :config
   (setq which-key-idle-delay 0.5)       ;Reduce delay
@@ -303,13 +296,11 @@ FACE defaults to inheriting from default and highlight."
 
 ;; Automatically reload files modified by external program
 (use-package autorevert
-  :ensure nil
   :diminish
   :hook (after-init . global-auto-revert-mode))
 
 ;; Multiple cursors
 (use-package multiple-cursors
-  :ensure t
   :bind
   (("C->"     . mc/mark-next-like-this)
    ("C-<"     . mc/mark-previous-like-this)
@@ -318,7 +309,6 @@ FACE defaults to inheriting from default and highlight."
 
 ;; Fancier Completion within emacs minibuffer
 (use-package counsel
-  :ensure t
   :diminish
   :bind
   (("M-y" . counsel-yank-pop)
@@ -326,16 +316,13 @@ FACE defaults to inheriting from default and highlight."
    ("M-y" . ivy-next-line)))
 
 (use-package ivy
-  :ensure t
   :diminish)
 
 (use-package rg
-  :ensure t
   :bind
   (("C-c r r" . rg-project)))
 
 (use-package swiper
-  :ensure t
   :diminish
   :bind (("C-s"     . swiper)
          ("C-r"     . swiper)
@@ -356,7 +343,6 @@ FACE defaults to inheriting from default and highlight."
 
 ;; Fancier window navigation
 (use-package ace-window
-  :ensure t
   :init
   (progn
     ;; Number windows when "C-x o"
@@ -368,7 +354,6 @@ FACE defaults to inheriting from default and highlight."
 
 ;; Undo tree
 (use-package undo-tree
-  :ensure t
   :diminish
   :init
   (global-undo-tree-mode)
@@ -378,12 +363,10 @@ FACE defaults to inheriting from default and highlight."
     (setq-default undo-tree-visualizer-diff t)))
 
 (use-package goto-line-preview
-  :ensure t
   :bind ([remap goto-line] . goto-line-preview))
 
 ;; Highlight lines that are too long and more
 (use-package whitespace
-  :ensure
   :diminish
   :config
   ;; (global-whitespace-mode 1)
@@ -391,41 +374,34 @@ FACE defaults to inheriting from default and highlight."
   (whitespace-style '(face empty tabs lines-tail trailing))
   (whitespace-line-column 78))
 
-(use-package unicode-whitespace
-  :ensure t)
+(use-package unicode-whitespace)
 
 ;; Expand selection to word, sentance, etc
 (use-package expand-region
-  :ensure
   :config
   :bind (("C-=" . er/expand-region)))
 
 ;; Iedit
 ;; Allows to edit multiple occurrences of a word
-(use-package iedit
-  :ensure)
+(use-package iedit)
 
 ;; Syntax checking
 (use-package flycheck
-  :ensure t
   ;; :init
   ;; (global-flycheck-mode t)
   )
 
 ;; Spell checking
-(use-package flyspell
-  :ensure t)
+(use-package flyspell)
 
 ;; Use Perl Compatible Regular Expressions
 (use-package pcre2el
-  :ensure t
   :diminish pcre-mode
   :config
   (pcre-mode))
 
 ;; Expand abbriviation to template
 (use-package yasnippet
-  :ensure t
   :diminish yas-minor-mode
   :init
   (setq yas-prompt-functions '(yas-ido-prompt))
@@ -433,7 +409,6 @@ FACE defaults to inheriting from default and highlight."
 
 ;; A collection of snippets
 (use-package yasnippet-snippets
-  :ensure t
   :diminish)
 
 ;; Fancier buffer list
@@ -463,11 +438,9 @@ FACE defaults to inheriting from default and highlight."
 ;; Magit
 ;; Graphical git interface
 (use-package magit
-  :ensure t
   :bind (("C-c m" . magit-status)))
 
 (use-package git-messenger
-  :ensure t
   :config
   (setq git-messenger:use-magit-popup t)
   :bind
@@ -476,12 +449,10 @@ FACE defaults to inheriting from default and highlight."
 ;; Rectangle selection
 ;; Press C-RET to start
 (use-package cua-base
-  :ensure t
   :config (cua-selection-mode 1))
 
 ;; Needs to be checked
 (use-package projectile
-  :ensure t
   :init
   (projectile-global-mode)
   (setq projectile-enable-caching t
@@ -491,7 +462,6 @@ FACE defaults to inheriting from default and highlight."
          ("C-c C-g" . projectile-grep)))
 
 (use-package counsel-projectile
-  :ensure t
   :init
   (counsel-projectile-mode))
 
@@ -508,35 +478,29 @@ FACE defaults to inheriting from default and highlight."
 ;;          ("C-c C-f" . ggtags-find-file)))
 
 (use-package diffview
-  :ensure t
   :init)
 
 (use-package treemacs
-  :ensure t
   :config
   (setq treemacs-position 'right)
   :bind
   (("s-t" . treemacs)))
 
 (use-package company
-  :ensure t
   :diminish
   :custom
   (company-dabbrev-downcase 0)
   (company-idle-delay 0))
 
 (use-package lsp-mode
-  :ensure t
   :commands lsp)
 
 (use-package lsp-treemacs
-  :ensure t
   :after lsp-mode
   :bind (("s-l e" . lsp-treemacs-errors-list)
          ("s-l S" . lsp-treemacs-symbols)))
 
 (use-package lsp-ui
-  :ensure t
   :commands lsp-ui-mode)
 
 (use-package ccls
@@ -545,69 +509,58 @@ FACE defaults to inheriting from default and highlight."
    (lambda () (require 'ccls) (lsp))))
 
 (use-package ivy-xref
-  :ensure t
   :diminish)
 
-(use-package helm-dash
-  :ensure t)
+(use-package helm-dash)
 
 (use-package org-superstar
-  :ensure t
   :hook (org-mode . org-superstar-mode))
 
 ;; Looking up a word in a dictionary
 (use-package lexic
-  :ensure t
   :bind
   (("M-s M-l RET" . lexic-search-word-at-point)
    ("M-s M-l /"   . lexic-search)))
+
+(use-package shell-pop
+  :custom
+    (shell-pop-universal-key "H-t")
+    (shell-pop-window-position "bottom")
+    (shell-pop-term-shell "/bin/zsh"))
 
 ;; --------------------------------
 ;; Modes
 ;; --------------------------------
 
-(use-package haskell-mode
-  :ensure t)
+(use-package haskell-mode)
 
-(use-package pandoc-mode
-  :ensure t)
+(use-package pandoc-mode)
 
-(use-package markdown-mode
-  :ensure t)
+(use-package markdown-mode)
 
-(use-package yaml-mode
-  :ensure t)
+(use-package yaml-mode)
 
-(use-package ninja-mode
-  :ensure t)
+(use-package ninja-mode)
 
-(use-package meson-mode
-  :ensure t)
+(use-package meson-mode)
 
 (use-package glsl-mode
-  :ensure t
   :bind (("C-c h" . glsl-find-man-page)))
 
-(use-package cmake-mode
-  :ensure t)
+(use-package cmake-mode)
 
-(use-package pkgbuild-mode
-  :ensure t)
+(use-package pkgbuild-mode)
 
-(use-package bison-mode
-  :ensure t)
+(use-package bison-mode)
 
-(use-package csv-mode
-  :ensure t)
+(use-package csv-mode)
 
 (use-package rust-mode
   :hook (rust-mode . lsp))
 
-(use-package systemd
-  :ensure t)
+(use-package systemd)
 
-(use-package gitignore-mode
-  :ensure t)
+(use-package gitignore-mode)
 
 ;; --------------------------------
 ;; Garbage
