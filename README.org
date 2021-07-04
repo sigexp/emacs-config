@@ -1,1 +1,43 @@
-Just put it in =~/.config/emacs=
+** About
+   This is but a personal config.
+** Installation
+   Just put it in =~/.config/emacs=
+** Emacs as a server
+   I tend to run Emacs in server mode. It migth be convenient to have a systemd
+   user unit for that:
+
+   #+begin_src
+[Unit]
+Description=Emacs Daemon
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/emacs --daemon
+ExecStop=/usr/bin/emacsclient --eval "(progn (setq kill-emacs-hook 'nil)(kill-emacs))"
+Restart=always
+
+[Install]
+WantedBy=default.target
+   #+end_src
+
+   Just put it in =~/.config/systemd/emacs.service=
+   You can then enable it with
+
+   ~$ systemctl --user enable emacs~
+** Key bindings
+   This config doesn't change Emacs' classic key bindings. Instead, I like to
+   remap my system-wide keyboard layout. Namely, I replace =Caps Lock= with
+   =Left Ctrl=, and =Left Ctrl= with =Hyper=. This doesn't only give me the more
+   convenient placement of Ctrl key, but also provides me with additional
+   keyboard modifier.
+
+   To achieve this behaviour, put this config in =~/.Xmodmap=:
+   #+begin_src
+remove Lock = Caps_Lock
+remove Control = Control_L
+remove mod4 = Hyper_L
+keysym Control_L = Hyper_L
+keysym Caps_Lock = Control_L
+add Control = Control_L
+add mod3 = Hyper_L
+   #+end_src
