@@ -26,6 +26,9 @@
                '("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
+(let ((default-directory (expand-file-name "lisp" user-emacs-directory)))
+  (normal-top-level-add-subdirs-to-load-path))
+
 ;; Install use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -542,6 +545,8 @@ FACE defaults to inheriting from default and highlight."
     (shell-pop-universal-key "H-t")
     (shell-pop-window-position "bottom")
     (shell-pop-term-shell "/bin/zsh"))
+
+(use-package apostil)
 
 ;; --------------------------------
 ;; Modes

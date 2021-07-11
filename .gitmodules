@@ -1,0 +1,3 @@
+[submodule "lisp/apostil"]
+	path = lisp/apostil
+	url = https://github.com/sigexp/apostil.git
