@@ -217,9 +217,18 @@ FACE defaults to inheriting from default and highlight."
     (advice-add #'show-paren-function :after #'show-paren-off-screen)))
 
 ;; Fonts
-;; (set-default-font "Inconsolata LGC-12")
 (add-to-list 'default-frame-alist
-             '(font . "Inconsolata LGC-14"))
+             '(font . "Iosevka 14"))
+
+(use-package ligature
+  :ensure t
+  :load-path "lisp/ligature"
+  :config
+  (ligature-set-ligatures
+   'prog-mode
+   ;; Iosevka ligatures for C
+   '("->" ">=" "<=" "==" "!=" "++"))
+  (global-ligature-mode 't))
 
 ;; --------------------------------
 ;; Handy stuff
