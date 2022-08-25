@@ -386,9 +386,6 @@ FACE defaults to inheriting from default and highlight."
     (make-variable-buffer-local 'undo-tree-visualizer-diff)
     (setq-default undo-tree-visualizer-diff t)))
 
-(use-package goto-line-preview
-  :bind ([remap goto-line] . goto-line-preview))
-
 ;; Highlight lines that are too long and more
 (use-package whitespace
   :diminish
