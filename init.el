@@ -93,11 +93,17 @@
 (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
 
 ;; Change default backup directory
-(setq backup-directory-alist
-      `((".*" . ,(concat user-emacs-directory "emacs-backups/"))))
+(setq user-backup-directory (concat user-emacs-directory "emacs-backups/"))
+(unless (file-exists-p user-backup-directory)
+  (make-directory user-backup-directory))
+(setq backup-directory-alist `((".*" . ,user-backup-directory)))
+
 ;; Change default autosave directory
-(setq auto-save-file-name-transforms
-      `((".*" ,(concat user-emacs-directory "emacs-autosave/") t)))
+(setq user-autosave-directory (concat user-emacs-directory "emacs-autosave/"))
+(unless (file-exists-p user-autosave-directory)
+  (make-directory user-autosave-directory))
+(setq auto-save-file-name-transforms `((".*" ,user-autosave-directory t)))
+
 ;; Change default custom-file
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
