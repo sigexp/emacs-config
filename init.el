@@ -554,6 +554,47 @@ FACE defaults to inheriting from default and highlight."
 
 (use-package apostil)
 
+;; Show minimap of the current buffer
+(use-package minimap
+  :init
+  :bind
+  (("s-c m" . minimap-mode))
+  :config
+  (setq minimap-window-location 'right))
+
+;; Bookmarks
+(use-package bm
+  :demand t
+  :init
+  (setq bm-restore-repository-on-load t)
+  :config
+  (setq-default bm-buffer-persistence t)
+  ;; Load bms on init
+  (add-hook 'after-init-hook #'bm-repository-load)
+  ;; Save bms
+  (add-hook 'kill-buffer-hook #'bm-buffer-save)     ;On buffer kill
+  (add-hook 'kill-emacs-hool #'(lambda nil          ;On emacs kill
+                                 (bm-buffer-save-all)
+                                 (bm-repository-save)))
+  (add-hook 'after-save-hook #'bm-buffer-save)      ;On file save
+  ;; Restore bms
+  (add-hook 'find-file-hook #'bm-buffer-restore)    ;On file find
+  (add-hook 'after-revert-hool #'bm-buffer-restore) ;On file revert
+  :bind
+  (("s-]"   . bm-next)
+   ("s-["   . bm-previous)
+   ("s-\\"  . bm-toggle)))
+
+;; A pile of useful stuff
+(use-package crux
+  :ensure t
+  :init
+  :bind
+  (("C-c o"   . crux-open-with)
+   ("M-o"     . crux-smart-open-line-above)
+   ("C-x 4 t" . crux-transpose-windows)
+   ("C-c d"   . crux-duplicate-current-line-or-region)))
+
 ;; --------------------------------
 ;; Modes
 ;; --------------------------------
