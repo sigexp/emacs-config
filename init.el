@@ -514,7 +514,10 @@ FACE defaults to inheriting from default and highlight."
   (company-idle-delay 0))
 
 (use-package lsp-mode
-  :commands lsp)
+  :commands lsp
+  :config
+  ;; lsp-lens-mode is awfully slow
+  (setq lsp-lens-enable nil))
 
 (use-package lsp-treemacs
   :after lsp-mode
